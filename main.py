@@ -7,6 +7,7 @@ import imageio
 import tensorflow as tf
 from os import path
 from Pose.PoseUtilities import get_module, get_keypoints, ModelType
+import time
 
 IMAGE_DIR = "images"
 
@@ -18,14 +19,19 @@ if __name__ == '__main__':
     image = tf.io.read_file(path.join(IMAGE_DIR, image_path))
     image = tf.image.decode_jpeg(image)
 
+    start = time.time()
     model, input_size = get_module(ModelType.THUNDER)
+    end1 = time.time()
+    print(f"load time = {end1 - start}")
 
     input_image = tf.expand_dims(image, axis=0)
     input_image = tf.image.resize_with_pad(input_image, input_size, input_size)
 
     output = get_keypoints(input_image, model)
+    print(f"kp time = {time.time()-end1}")
 
     print(output.shape)
+    print(output[0][0][0])
 
     # import tensorflow as tf
     # import tensorflow_hub as hub
